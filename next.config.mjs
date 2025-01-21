@@ -1,13 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',  // Enable static export
+  images: {
+    unoptimized: true, // Required for static export
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
-  },
-  images: {
-    unoptimized: true,
   },
   experimental: {
     webpackBuildWorker: true,
@@ -16,9 +17,10 @@ const nextConfig = {
 
 let userConfig
 try {
-  userConfig = await import('./v0-user-next.config.mjs')
+  userConfig = await import('./v0-user-next.config.mjs').catch(() => ({}))
 } catch (e) {
   // ignore error
+  userConfig = {}
 }
 
 function mergeConfig(nextConfig, userConfig) {

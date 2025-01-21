@@ -5,38 +5,40 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
-import { scheduleConsultation } from "../actions/contact"
 
 export function ConsultationForm() {
   const [isPending, setIsPending] = useState(false)
   const { toast } = useToast()
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
     setIsPending(true)
-    try {
-      const result = await scheduleConsultation(formData)
-      if (result.success) {
-        toast({
-          title: "Success!",
-          description: result.message,
-        })
-        // Reset form
-        const form = document.getElementById("consultation-form") as HTMLFormElement
-        form.reset()
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsPending(false)
+
+    const formData = new FormData(event.currentTarget)
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      company: formData.get("company"),
     }
+
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Here you would typically send this to an external API
+    console.log("Form submitted:", data)
+
+    toast({
+      title: "Success!",
+      description: "Thanks! We'll be in touch shortly to schedule your consultation.",
+    })
+
+    // Reset form
+    event.currentTarget.reset()
+    setIsPending(false)
   }
 
   return (
-    <form id="consultation-form" action={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="name">Name</Label>
         <Input id="name" name="name" required />

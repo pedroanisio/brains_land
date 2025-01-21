@@ -3,10 +3,8 @@ compatibility_date = "2024-01-21"
 
 [build]
 command = "npm run build"
+pages_build_output_dir = "out"
 
 [build.environment]
 NODE_VERSION = "18"
-
-[site]
-bucket = "./out"
 

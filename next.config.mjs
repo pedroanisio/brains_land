@@ -1,10 +1,3 @@
-let userConfig = undefined
-try {
-  userConfig = await import('./v0-user-next.config')
-} catch (e) {
-  // ignore error
-}
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -18,16 +11,19 @@ const nextConfig = {
   },
   experimental: {
     webpackBuildWorker: true,
-    parallelServerBuildTraces: true,
-    parallelServerCompiles: true,
   },
 }
 
-mergeConfig(nextConfig, userConfig)
+let userConfig
+try {
+  userConfig = await import('./v0-user-next.config.mjs')
+} catch (e) {
+  // ignore error
+}
 
 function mergeConfig(nextConfig, userConfig) {
   if (!userConfig) {
-    return
+    return nextConfig
   }
 
   for (const key in userConfig) {
@@ -43,6 +39,9 @@ function mergeConfig(nextConfig, userConfig) {
       nextConfig[key] = userConfig[key]
     }
   }
+
+  return nextConfig
 }
 
-export default nextConfig
+export default mergeConfig(nextConfig, userConfig?.default || userConfig)
+
